@@ -449,7 +449,7 @@ public class GameSequenceHandler {
         for (Player player : players) {
             resetPlayerHandler.resetPlayer(player);
             removeBossBar(player);
-            String lobbyWorldName = (String) configHandler.getPluginSettings().get("lobby-world");
+            String lobbyWorldName = configHandler.getPluginSettings().getString("lobby-world");
             assert lobbyWorldName != null;
             World lobbyWorld = Bukkit.getWorld(lobbyWorldName);
             assert lobbyWorld != null;

@@ -38,3 +38,6 @@ There is an official server for this plugin on [Discord](https://discord.gg/qcRf
 ## Wiki
 There is a full [Wiki](https://hungergames.aymanisam.me/docs/introduction) for this plugin, powered by Docusaurus. 
 
+## Custom Version
+If you're interested in a custom version of this plugin tailored to your specific needs, join the discord server and reach out to me or create a GitHub issue.
+

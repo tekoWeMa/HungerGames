@@ -134,6 +134,8 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
+		if (isInIgnoredWorld(event.getPlayer().getWorld().getName())) return;
+
         Player player = event.getPlayer();
         List<Player> worldPlayersWaiting = setSpawnHandler.playersWaiting.computeIfAbsent(player.getWorld().getName(), k -> new ArrayList<>());
 
@@ -153,7 +155,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        String lobbyWorldName = (String) configHandler.getPluginSettings().get("lobby-world");
+        String lobbyWorldName = configHandler.getPluginSettings().getString("lobby-world");
         assert lobbyWorldName != null;
         World lobbyWorld = Bukkit.getWorld(lobbyWorldName);
         if (lobbyWorld != null) {
@@ -190,6 +192,8 @@ public class PlayerListener implements Listener {
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
         World world = player.getWorld();
+
+	    if (isInIgnoredWorld(world.getName())) return;
 
         List<Player> worldPlayersWaiting = setSpawnHandler.playersWaiting.computeIfAbsent(world.getName(), k -> new ArrayList<>());
         List<Player> worldPlayersAlive = playersAlive.computeIfAbsent(world.getName(), k -> new ArrayList<>());
@@ -286,9 +290,9 @@ public class PlayerListener implements Listener {
         if (gameStarted.getOrDefault(world.getName(), false)) {
             for (Player p : world.getPlayers()) {
                 langHandler.getLangConfig(p);
-                if (killer != null)
-                    p.sendMessage(langHandler.getMessage(player, "game.killed-message", player.getName(), killer.getName()));
-                else {
+                if (killer != null) {
+	                p.sendMessage(langHandler.getMessage(player, "game.killed-message", player.getName(), killer.getName()));
+                } else {
                     p.sendMessage(langHandler.getMessage(player, "game.death-message", player.getName()));
                 }
             }
@@ -298,6 +302,9 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
+
+	    if (isInIgnoredWorld(player.getWorld().getName())) return;
+
         Map<Player, Location> worldDeathLocations = deathLocations.computeIfAbsent(player.getWorld().getName(), k -> new HashMap<>());
 
         if (worldDeathLocations.containsKey(player)) {
@@ -309,6 +316,9 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
+
+	    if (isInIgnoredWorld(player.getWorld().getName())) return;
+
         if (player.getGameMode() == GameMode.SPECTATOR) {
             if (event.getClickedBlock() != null) {
                 Material blockType = event.getClickedBlock().getType();
@@ -323,6 +333,8 @@ public class PlayerListener implements Listener {
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         Entity damager = event.getDamager();
         Entity damaged = event.getEntity();
+
+	    if (isInIgnoredWorld(damager.getWorld().getName())) return;
 
         if (damager instanceof Arrow arrow) {
             if (arrow.getShooter() instanceof Player) {
@@ -402,6 +414,9 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onChestOpen(PlayerInteractEvent event) {
         Player player = event.getPlayer();
+
+	    if (isInIgnoredWorld(player.getWorld().getName())) return;
+
         Block block = event.getClickedBlock();
 
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
@@ -429,7 +444,9 @@ public class PlayerListener implements Listener {
     public void onProjectileShot(ProjectileLaunchEvent event) {
         Projectile projectile = event.getEntity();
 
-        if (!(projectile instanceof Arrow|| projectile instanceof Firework)) {
+	    if (isInIgnoredWorld(projectile.getWorld().getName())) return;
+
+	    if (!(projectile instanceof Arrow|| projectile instanceof Firework)) {
             return;
         }
 
@@ -455,7 +472,10 @@ public class PlayerListener implements Listener {
     public void onProjectileLanded(ProjectileHitEvent event) {
         Projectile projectile = event.getEntity();
 
-        if (!(projectile instanceof Arrow || projectile instanceof SpectralArrow || projectile instanceof Firework)) {
+	    if (isInIgnoredWorld(projectile.getWorld().getName())) return;
+
+
+	    if (!(projectile instanceof Arrow || projectile instanceof SpectralArrow || projectile instanceof Firework)) {
             return;
         }
 
@@ -486,7 +506,9 @@ public class PlayerListener implements Listener {
             return;
         }
 
-        double healthRegenerated = event.getAmount();
+	    if (isInIgnoredWorld(player.getWorld().getName())) return;
+
+	    double healthRegenerated = event.getAmount();
 
         if (configHandler.getPluginSettings().getBoolean("database.enabled")) {
 	        PlayerStatsHandler playerStats = statsMap.get(player.getUniqueId());
@@ -502,7 +524,9 @@ public class PlayerListener implements Listener {
         Player player = event.getPlayer();
         ItemStack consumedItem = event.getItem();
 
-        if (configHandler.getPluginSettings().getBoolean("database.enabled")) {
+	    if (isInIgnoredWorld(player.getWorld().getName())) return;
+
+	    if (configHandler.getPluginSettings().getBoolean("database.enabled")) {
 	        PlayerStatsHandler playerStats = statsMap.get(player.getUniqueId());
 
 	        if (consumedItem.getType() == Material.POTION) {
@@ -521,7 +545,9 @@ public class PlayerListener implements Listener {
             return;
         }
 
-        if (configHandler.getPluginSettings().getBoolean("database.enabled")) {
+	    if (isInIgnoredWorld(player.getWorld().getName())) return;
+
+	    if (configHandler.getPluginSettings().getBoolean("database.enabled")) {
 	        PlayerStatsHandler playerStats = statsMap.get(player.getUniqueId());
 
 	        playerStats.setPotionsUsed(playerStats.getPotionsUsed() + 1);
@@ -535,6 +561,8 @@ public class PlayerListener implements Listener {
         if (!(event.getEntity().getShooter() instanceof Player player)) {
             return;
         }
+
+	    if (isInIgnoredWorld(player.getWorld().getName())) return;
 
         if (configHandler.getPluginSettings().getBoolean("database.enabled")) {
 	        PlayerStatsHandler playerStats = statsMap.get(player.getUniqueId());
@@ -551,10 +579,11 @@ public class PlayerListener implements Listener {
             return;
         }
 
-        if (event.isCancelled()) {
+	    if (isInIgnoredWorld(player.getWorld().getName())) return;
+
+	    if (event.isCancelled()) {
             return;
         }
-
 
         if (configHandler.getPluginSettings().getBoolean("database.enabled")) {
 	        PlayerStatsHandler playerStats = statsMap.get(player.getUniqueId());
@@ -564,4 +593,9 @@ public class PlayerListener implements Listener {
 	        playerStats.setDirty();
         }
     }
+
+	private boolean isInIgnoredWorld(String worldName) {
+		return configHandler.getPluginSettings().getStringList("ignored-worlds").contains(worldName)
+				|| worldName.equals(configHandler.getPluginSettings().getString("lobby-world"));
+	}
 }
