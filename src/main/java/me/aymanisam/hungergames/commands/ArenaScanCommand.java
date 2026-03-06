@@ -122,6 +122,9 @@ public class ArenaScanCommand implements CommandExecutor {
         sender.sendMessage(langHandler.getMessage(player, "scanarena.found-barrels", barrelLocations.size()));
         sender.sendMessage(langHandler.getMessage(player, "scanarena.found-trapped-chests", trappedChestLocations.size()));
 
+        // Sets PVP to false to reduce pre-configuration of plugin
+        world.setPVP(false);
+
         return true;
     }
 }

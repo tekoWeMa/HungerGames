@@ -55,8 +55,6 @@ public class PlayerListener implements Listener {
         Player player = event.getPlayer();
         event.setQuitMessage(null);
 
-        resetPlayerHandler.resetPlayer(player);
-
         List<Player> worldPlayersWaiting = setSpawnHandler.playersWaiting.computeIfAbsent(player.getWorld().getName(), k -> new ArrayList<>());
         List<Player> worldPlayersAlive = playersAlive.computeIfAbsent(player.getWorld().getName(), k -> new ArrayList<>());
         List<Player> worldPlayersPlacement = playerPlacements.computeIfAbsent(player.getWorld().getName(), k -> new ArrayList<>());
