@@ -407,7 +407,7 @@ public class GameSequenceHandler {
 		    if (startingPlayers != null && worldPlayerPlacements.size() == worldStartingPlayers.size()) {
 			    for (Player player : worldPlayerPlacements) {
 				    int playerIndex = worldPlayerPlacements.indexOf(player);
-				    double percentile = (1 - (playerIndex / (worldPlayerPlacements.size() - 1.0))) * 100.0;
+				    double percentile = worldPlayerPlacements.size() == 1 ? 100.0 : (1 - (playerIndex / (worldPlayerPlacements.size() - 1.0))) * 100.0;
 
                     if (configHandler.getPluginSettings().getBoolean("database.enabled")) {
 	                    PlayerStatsHandler playerStats = statsMap.get(player.getUniqueId());
@@ -423,7 +423,7 @@ public class GameSequenceHandler {
 		    if (worldTeamPlacements.size() == teams.computeIfAbsent(world.getName(), k -> new ArrayList<>()).size()) {
 			    for (List<Player> team : worldTeamPlacements) {
 				    int teamIndex = worldTeamPlacements.indexOf(team);
-				    double percentile = (1 - (teamIndex / (worldTeamPlacements.size() - 1.0))) * 100.0;
+				    double percentile = worldTeamPlacements.size() == 1 ? 100.0 : (1 - (teamIndex / (worldTeamPlacements.size() - 1.0))) * 100.0;
 
                     if (configHandler.getPluginSettings().getBoolean("database.enabled")) {
                         for (Player player : team) {
