@@ -154,7 +154,7 @@ public class DatabaseHandler {
         statement.setInt(13, stats.getSupplyDropsOpened());
         statement.setInt(14, stats.getEnvironmentDeaths());
         statement.setInt(15, stats.getBorderDeaths());
-        statement.setInt(16, stats.getBorderDeaths());
+        statement.setInt(16, stats.getPlayerDeaths());
         statement.setInt(17, stats.getArrowsShot());
         statement.setInt(18, stats.getArrowsLanded());
         statement.setInt(19, stats.getFireworksShot());
